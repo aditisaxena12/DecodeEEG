@@ -115,7 +115,7 @@ class Img2Vec():
         """
 
         if model_name.startswith('resnet') and not model_name.startswith('resnet-'):
-            model = getattr(models, model_name)(pretrained=True)
+            model = getattr(models, model_name)(weights=models.ResNet18_Weights.DEFAULT)
             if layer == 'default':
                 layer = model._modules.get('avgpool')
                 self.layer_output_size = self.RESNET_OUTPUT_SIZES[model_name]
@@ -123,7 +123,7 @@ class Img2Vec():
                 layer = model._modules.get(layer)
             return model, layer
         elif model_name == 'resnet-18':
-            model = models.resnet18(pretrained=True)
+            model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
             if layer == 'default':
                 layer = model._modules.get('avgpool')
                 self.layer_output_size = 512
