@@ -26,10 +26,11 @@ def extract_features(input_folder_path, output_folder_path):
 def get_concept(images_folder, vectors_folder):
     #iterate over all concept folders
     filenames= os.listdir (images_folder)
-    print(filenames)
+
     for foldername in filenames:
         input_folder  = images_folder + foldername
         output_folder = vectors_folder + foldername
+        print("Processing ...",foldername)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         extract_features(input_folder,output_folder)
