@@ -33,3 +33,14 @@ python3 extract_features.py --train true --test true
 
 Extracted vectors are stored in folder `data/feature_vectors/training` and `data/feature_vectors/test`
 
+## Step 3 - Process the EEG to produce spectrograms
+
+Run the below scripts to extract spectrograms from the EEG signals of respective subject
+
+```
+cd src/eeg_preprocessing
+python3 create_spectrogram.py --sub xx
+```
+
+Extracted spectrograms stored in folder `data/spectrograms/sub-xx/`
+
