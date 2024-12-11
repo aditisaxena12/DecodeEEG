@@ -1,4 +1,4 @@
-# DecodeEEG
+# DecodeEEG - (In Progress)
 
 ### Dataset used - [A large and rich EEG dataset for modeling human visual object recognition](https://www.sciencedirect.com/science/article/pii/S1053811922008758#sec0006)
 
