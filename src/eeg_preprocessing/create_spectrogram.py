@@ -2,7 +2,7 @@ import argparse
 import os
 import h5py
 import numpy as np
-from scipy.signal import spectrogram  
+from scipy.signal import ShortTimeFFT, spectrogram
 
 def eeg_to_spectrogram(input_file, output_file):
 
