@@ -44,3 +44,10 @@ python3 create_spectrogram.py --sub xx
 
 Extracted spectrograms stored in folder `data/spectrograms/sub-xx/`
 
+## Step 4 - Data Exploration
+Explore and visualize the data in the notebook `src/visualize/data_analysis.ipynb`
+
+## Step 5 - Simple Convolution Network 
+Added a simple 2D convolutional network to train on the spectrograms obtained from the EEGs of a single subject. 
+The model along with its data preparation and training steps is added here `src/model/simple_model.ipynb`
+
