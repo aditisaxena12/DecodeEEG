@@ -1,32 +1,56 @@
 import argparse
 import os
-import h5py
 import numpy as np
-from scipy.signal import ShortTimeFFT, spectrogram
+import h5py
+from scipy.signal import ShortTimeFFT
+from scipy.signal.windows import gaussian
 
-def eeg_to_spectrogram(input_file, output_file):
+def eeg_to_spectrogram(eeg):
+    """
+    Converts a single EEG signal (17x100) into its spectrogram.
+    """
+    g_std = 12  # standard deviation for Gaussian window in samples
+    win = gaussian(50, std=g_std, sym=True)  # symmetric Gaussian window
+    T_x, N = 1 / 100, 100  # Sampling rate: 100 Hz, signal length: 100 samples
+    SFT = ShortTimeFFT(win, hop=2, fs=1/T_x, mfft=800, scale_to='psd')
 
-    # Load the npy file
-    file = np.load(input_file,  allow_pickle=True).item()
-    data = file['preprocessed_eeg_data']
-    print(data.shape)  # Should output (16540, 4, 17, 100)
-    # Parameters for spectrogram
-    fs = 100  # Sampling frequency (adjust based on your data)
-    nperseg = 50  # Length of each segment (adjust based on EEG characteristics)
-     # Create an HDF5 file to store the spectrograms
-    with h5py.File(output_file, "w") as hf:
-        for i in range(data.shape[0]):  # Iterate over 16540
-            for j in range(data.shape[1]):  # Iterate over 4
-                group = hf.create_group(f"signal_{i}_{j}")
-                for k in range(data.shape[2]):  # Iterate over 17
-                    signal = data[i, j, k, :]  # Extract the signal
-                    frequencies, times, Sxx = spectrogram(signal, fs, nperseg=nperseg)
-                    
-                    # Store the spectrogram
-                    group.create_dataset(f"channel_{k}_frequencies", data=frequencies)
-                    group.create_dataset(f"channel_{k}_times", data=times)
-                    group.create_dataset(f"channel_{k}_spectrogram", data=Sxx)
+    # Calculate Spectrogram
+    Sx2 = SFT.spectrogram(eeg)  # shape: (17, ?, ?)
+    return Sx2
 
+def process_eeg_file(input_file, output_file):
+    """
+    Processes an EEG .npy file into spectrograms and saves the result in HDF5 format.
+    """
+    # Load the .npy file
+    file = np.load(input_file, allow_pickle=True).item()
+    data = file['preprocessed_eeg_data']  # Shape: (N, M, 17, 100)
+    print(f"Input data shape: {data.shape}")  # e.g., (16540, 4, 17, 100) or (200,80,17,100)
+
+    N, M, num_channels, num_timepoints = data.shape
+
+    # Create an HDF5 file for saving the spectrograms
+    with h5py.File(output_file, 'w') as h5f:
+        # Create dataset without compression
+        dset = h5f.create_dataset(
+            "spectrograms",
+            shape=(N, M, num_channels, 401, 75),  # Final desired shape
+            dtype=np.float32,
+        )
+
+        # Process each EEG signal and save incrementally
+        for i in range(N):
+            print(i)
+            spectrogram_images = np.array([
+                eeg_to_spectrogram(data[i, j, :, :]) for j in range(M)
+            ])  # Shape: (M, 17, 401, 75)
+            dset[i] = spectrogram_images  # Write to HDF5 file incrementally
+
+        print(f"Spectrograms saved to {output_file}")
+
+
+            
+                   
 
 if __name__ == "__main__":
     # Initialize parser
@@ -52,10 +76,10 @@ if __name__ == "__main__":
         os.remove(file)
 
     input_file_test = input_folder + '/preprocessed_eeg_test.npy'
-    output_file_test = output_folder + '/spectrogram_test.h5'
+    output_file_test = output_folder + '/spectrograms_test.h5'
 
     input_file_train = input_folder + '/preprocessed_eeg_training.npy'
-    output_file_train = output_folder + '/spectrogram_training.h5'
+    output_file_train = output_folder + '/spectrograms_train.h5'
+    process_eeg_file(input_file_train, output_file_train)
+    process_eeg_file(input_file_test, output_file_test)
 
-    eeg_to_spectrogram(input_file_test, output_file_test)
-    eeg_to_spectrogram(input_file_train, output_file_train)
