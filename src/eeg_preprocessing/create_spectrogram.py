@@ -21,7 +21,7 @@ def process_eeg_file(input_file, output_file):
         # Create dataset without compression
         dset = h5f.create_dataset(
             "spectrograms",
-            shape=(N, M, num_channels, 401, 75),  # Final desired shape
+            shape=(N, M, num_channels, 26, 26),  # Final desired shape
             dtype=np.float32,
         )
 

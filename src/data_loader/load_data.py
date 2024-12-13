@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import h5py
 
 def load_eeg(subject_id = "01", training = True):
     '''
@@ -18,6 +19,18 @@ def load_eeg(subject_id = "01", training = True):
     print("Extracted EEG data of subject: ", subject_id)
     print("Shape of EEG", eeg_data.shape)
     return eeg_data
+
+def load_spectrograms(subject_id = "01", training = True):
+    path_to_spec = "/home/aditis/decodingEEG/DecodeEEG/data/spectrograms/sub-"+subject_id
+    if training:
+        file_path = path_to_spec + '/spectrograms_train.h5'
+    else:
+        file_path = path_to_spec + '/spectrograms_test.h5'
+
+    
+    return file_path
+
+
 
 
 def load_features(training = True):

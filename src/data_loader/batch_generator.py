@@ -1,55 +1,52 @@
 from eeg_preprocessing import eeg_to_spectrogram
 import numpy as np
+import h5py
 
-def train_batch_generator(eeg_data, feature_matrix, batch_size=1654):
+def train_batch_generator(path_to_spectrograms, feature_matrix, batch_size=1654):
     """
     Generator for training data batches.
-    Input : EEG data of one subject (16540 x 4 x 17 x 100), feature matrix of all images (16540 x 512)
+    Input : EEG data of one subject (16540 x 4 x 17 x 26 x 26), feature matrix of all images (16540 x 512)
     Output : Batches of spectrograms (1654 x 17 x 401 x 75) and feature vectors (1654 x 512)
     """
-    num_samples = eeg_data.shape[0]
+    with h5py.File(path_to_spectrograms, 'r') as f: 
+        # Access the dataset
+        spectrograms = f['spectrograms']  # This is a reference to the dataset
+        num_samples = spectrograms.shape[0]
 
-    while True:  # Infinite loop to yield batches
-        for i in range(eeg_data.shape[1] - 1):  # Iterate over EEG sets (3 sets)
-            eeg = eeg_data[:, i, :, :]
+        while True:  # Infinite loop to yield batches
+            for i in range(spectrograms.shape[1] - 1):  # Iterate over EEG sets (3 sets)
+                spec  = spectrograms[:, i, :, :]
+                for k in range(0, num_samples, batch_size):  # Iterate over chunks
+                    batch_end = min(k + batch_size, num_samples)  # Ensure no overflow
+                    spectro = spec[k:batch_end,:,:]
+                    features = feature_matrix[k:batch_end, :]
+                    yield (spectro, features)  # Yield the batch
+
+
+
+def validation_batch_generator(path_to_spectrograms, feature_matrix, batch_size=1654):
+    """
+    Generator for validation data batches.
+    Input : EEG data of one subject (16540 x 4 x 17 x 26 x 26), feature matrix of all images (16540 x 512)
+    Output : Batches of spectrograms (1654 x 17 x 401 x 75) and feature vectors (1654 x 512)
+    """
+    with h5py.File(path_to_spectrograms, 'r') as f: 
+        # Access the dataset
+        spectrograms = f['spectrograms']  # This is a reference to the dataset
+        num_samples = spectrograms.shape[0]
+        spec  = spectrograms[:, 3, :, :]
+        while True:  # Infinite loop to yield batches
             for k in range(0, num_samples, batch_size):  # Iterate over chunks
-                spectro = []
                 batch_end = min(k + batch_size, num_samples)  # Ensure no overflow
-                for j in range(k, batch_end):
-                    Sx2 = eeg_to_spectrogram(eeg[j, :, :])  # Spectrogram calculation
-                    spectro.append(Sx2)
-                
-                spectro = np.stack(spectro)
+                spectro = spec[k:batch_end,:,:]
                 features = feature_matrix[k:batch_end, :]
                 yield (spectro, features)  # Yield the batch
 
 
-def validation_batch_generator(eeg_data, feature_matrix, batch_size=1654):
-    """
-    Generator for validation data batches.
-    Input : EEG data of one subject (16540 x 4 x 17 x 100), feature matrix of all images (16540 x 512)
-    Output : Batches of spectrograms (1654 x 17 x 401 x 75) and feature vectors (1654 x 512)
-    """
-    num_samples = eeg_data.shape[0]
-    eeg = eeg_data[:, 3, :, :]  # Use the 4th set for validation
-
-    while True:  # Infinite loop to yield batches
-        for k in range(0, num_samples, batch_size):  # Iterate over chunks
-            spectro = []
-            batch_end = min(k + batch_size, num_samples)  # Ensure no overflow
-            for j in range(k, batch_end):
-                Sx2 = eeg_to_spectrogram(eeg[j, :, :])  # Spectrogram calculation
-                spectro.append(Sx2)
-            
-            spectro = np.stack(spectro)
-            features = feature_matrix[k:batch_end, :]
-            yield (spectro, features)  # Yield the batch
-
-
 # Define generator for spectrograms
-def test_batch_generator(eeg_data, batch_size=20):
-    for i in range(0, eeg_data.shape[0], batch_size):
-        batch_eeg = eeg_data[i:i+batch_size, :, :, :]
-        spectro_batch = [eeg_to_spectrogram(eeg) for eeg in batch_eeg]
-        spectro_batch = np.stack(spectro_batch)
-        yield spectro_batch
+def test_batch_generator(path_to_spec, num_samples, batch_size=20):
+    with h5py.File(path_to_spec, 'r') as f: 
+        spectrograms = f['spectrograms'] 
+        for i in range(0, num_samples, batch_size):
+            spectro_batch = spectrograms[i:i+batch_size, :, :, :]
+            yield spectro_batch

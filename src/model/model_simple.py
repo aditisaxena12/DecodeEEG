@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from keras.utils.vis_utils import plot_model
 
-def build_cnn_model(input_shape=(17, 401, 75)):
+def build_cnn_model(input_shape=(17, 26, 26)):
     """
     Builds and compiles a CNN model to map spectrograms to feature vectors.
     
