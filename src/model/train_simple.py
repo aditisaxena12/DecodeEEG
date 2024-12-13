@@ -32,7 +32,7 @@ print("Training Accuracy: {:.2f}%".format(100 * (1 - history.history['loss'][-1]
 print("Validation Accuracy: {:.2f}%".format(100 * (1 - history.history['val_loss'][-1])))
 
 # Save the trained model
-model.save("cnn_model_simple_trained.h5")
+model.save("/home/aditis/decodingEEG/DecodeEEG/data/results/cnn_model_simple_trained.h5")
 
 # Plot training vs validation loss (optional)
 import matplotlib.pyplot as plt

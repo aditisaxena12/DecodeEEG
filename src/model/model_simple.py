@@ -40,6 +40,6 @@ def build_cnn_model(input_shape=(17, 401, 75)):
     # Compile the model
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
-    plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True) 
+    plot_model(model, to_file='/home/aditis/decodingEEG/DecodeEEG/data/results/model_plot.png', show_shapes=True, show_layer_names=True) 
 
     return model

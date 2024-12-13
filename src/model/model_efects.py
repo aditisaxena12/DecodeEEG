@@ -127,4 +127,4 @@ if __name__ == '__main__':
   m = model_ccn()
   m.compile()
   m.summary()
-  plot_model(m, to_file='model_plot_efects.png', show_shapes=True, show_layer_names=True) 
+  plot_model(m, to_file='/home/aditis/decodingEEG/DecodeEEG/data/results/model_plot_efects.png', show_shapes=True, show_layer_names=True) 
