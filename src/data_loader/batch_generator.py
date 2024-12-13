@@ -44,3 +44,12 @@ def validation_batch_generator(eeg_data, feature_matrix, batch_size=1654):
             spectro = np.stack(spectro)
             features = feature_matrix[k:batch_end, :]
             yield (spectro, features)  # Yield the batch
+
+
+# Define generator for spectrograms
+def test_batch_generator(eeg_data, batch_size=20):
+    for i in range(0, eeg_data.shape[0], batch_size):
+        batch_eeg = eeg_data[i:i+batch_size, :, :, :]
+        spectro_batch = [eeg_to_spectrogram(eeg) for eeg in batch_eeg]
+        spectro_batch = np.stack(spectro_batch)
+        yield spectro_batch

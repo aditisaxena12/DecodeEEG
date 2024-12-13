@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
+from keras.utils.vis_utils import plot_model
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPool2D, Flatten, Embedding, Concatenate, Dropout, Lambda, TimeDistributed, LSTM, GlobalAveragePooling2D, Reshape, DepthwiseConv2D, Permute, Activation, ConvLSTM2D
 from tensorflow.keras.regularizers import l2
 import numpy as np                 
@@ -119,9 +120,11 @@ def model_ccn(l2_dense=0.001, l2_conv=0.001, dropout=0.2, l2_emb=0.0001, num_sub
     #Classification
     #output = Dense(1, activation ='softmax', name = 'Output')(x2)
     output = Dense(feature_vector_dim, name = 'Output')(x2)
+    
     return Model(inputs={"input_1": input1, "input_2": sub_pk_input, "input_3": bl_pk_input}, outputs=output)
     
 if __name__ == '__main__':
   m = model_ccn()
   m.compile()
   m.summary()
+  plot_model(m, to_file='model_plot_efects.png', show_shapes=True, show_layer_names=True) 
