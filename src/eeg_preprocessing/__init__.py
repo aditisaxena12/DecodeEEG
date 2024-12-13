@@ -1,0 +1,1 @@
+from .eeg_to_spectrogram import eeg_to_spectrogram
