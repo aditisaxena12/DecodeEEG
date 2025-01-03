@@ -50,3 +50,39 @@ def test_batch_generator(path_to_spec, num_samples, batch_size=20):
         for i in range(0, num_samples, batch_size):
             spectro_batch = spectrograms[i:i+batch_size, :, :, :]
             yield spectro_batch
+
+
+def efects_batch_generator(spectrograms, subject_ids, block_ids, feature_matrix, batch_size=32, shuffle=False):
+    """
+    Batch generator for spectrograms, subject ids, block ids, and corresponding feature vectors.
+    Yields batches of data and labels in the required format for the model.
+    """
+    num_samples = spectrograms.shape[0]
+    indices = np.arange(num_samples)
+    
+    if shuffle:
+        np.random.shuffle(indices)
+    
+    for start_idx in range(0, num_samples, batch_size):
+        end_idx = min(start_idx + batch_size, num_samples)
+        batch_indices = indices[start_idx:end_idx]
+        
+        # Extract batches of spectrograms, subject ids, and block ids
+        spectrogram_batch = spectrograms[batch_indices]
+        subject_batch = subject_ids[batch_indices]
+        block_batch = block_ids[batch_indices]
+        feature_batch = feature_matrix[batch_indices]
+        
+        # Reshape spectrogram_batch to the required shape (batch_size, 26, 26, 17)
+        spectrogram_batch_reshaped = spectrogram_batch.transpose(0, 3, 1, 2)  # (batch_size, 26, 26, 17)
+        
+        # Prepare inputs dictionary
+        inputs = {
+            "input_1": spectrogram_batch_reshaped,  # Shape (batch_size, 26, 26, 17)
+            "input_2": subject_batch,                 # Shape (batch_size,)
+            "input_3": block_batch                      # Shape (batch_size,)
+        }
+        
+        
+        # Yield the inputs and targets as a tuple
+        yield inputs, feature_batch
