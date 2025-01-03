@@ -1,14 +1,26 @@
 import numpy as np
 from tensorflow.keras.optimizers import Adam
 from model_latest import model_ccn
+import h5py
 
 path_to_feature_vectors = "/home/aditis/decodingEEG/DecodeEEG/data/feature_vectors/"
 path_to_spectrograms = "/home/aditis/decodingEEG/DecodeEEG/data/spectrograms/"
 
 # Simulated data (replace with actual data)
-num_samples = 16540
-dim = [1, 17, 100, 16540*40]  # Spectrogram input dimensions
+num_samples = 16540 * 4 * 10
+num_subjects = 10
+num_images_per_sub = 16540 * 4
+dim = [1, 26, 26, 17]  # Spectrogram input dimensions
 feature_vector_dim = 512  # Ground truth feature vector dimension
+
+subject_ids = []
+for i in range(num_subjects):
+    sub_ind = i+1
+    path_to_spec = "/home/aditis/decodingEEG/DecodeEEG/data/spectrograms/sub-" + "{:02}".format(sub_ind) + "/"
+    with h5py.File(path_to_spec+'spectrograms_train.h5', 'r') as f: 
+        # Access the dataset
+        spectrograms = f['spectrograms']  # This is a reference to the dataset
+        print(f"Spectrogram dataset shape: {spectrograms.shape}")  # Example: (N, M, 17, 26, 26)
 
 
 # =============== trial : random input ====================

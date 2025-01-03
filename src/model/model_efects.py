@@ -6,7 +6,7 @@ from tensorflow.keras.regularizers import l2
 import numpy as np                 
 
 #this combines all models and is able to add/remove 
-def model_ccn(l2_dense=0.001, l2_conv=0.001, dropout=0.2, l2_emb=0.0001, num_sub=10, num_blocks=16540, dim=[1,100,17,16540*40], emb_rem_index=0, feature_vector_dim=512):
+def model_ccn(l2_dense=0.001, l2_conv=0.001, dropout=0.2, l2_emb=0.0001, num_sub=10, num_blocks=16540, dim=[1,26,26,17], emb_rem_index=0, feature_vector_dim=512):
     #############################Inputs#########################################
     #input_1: the electrodes data
     #dim[1], dim[2], dim[3]: number of time points, number of frequencies, and number of electrodes

@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+# Add the project root to sys.path
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))
+
 from model_simple import build_cnn_model
 import numpy as np
 from data_loader import load_spectrograms, load_features, train_batch_generator, validation_batch_generator
