@@ -44,12 +44,21 @@ def validation_batch_generator(path_to_spectrograms, feature_matrix, batch_size=
 
 
 # Define generator for spectrograms
-def test_batch_generator(path_to_spec, num_samples, batch_size=20):
+def test_batch_generator(path_to_spec, feature_matrix, batch_size=20):
+    num_samples = feature_matrix.shape[0]
     with h5py.File(path_to_spec, 'r') as f: 
         spectrograms = f['spectrograms'] 
-        for i in range(0, num_samples, batch_size):
-            spectro_batch = spectrograms[i:i+batch_size, :, :, :]
-            yield spectro_batch
+        while True:
+            for k in range(spectrograms.shape[1] ):  # Iterate over EEG sets (3 sets)
+                spec  = spectrograms[:, k, :, :]
+                for i in range(0, num_samples, batch_size):
+                    batch_end = min(i + batch_size, num_samples)
+                    spectro_batch = spec[i:batch_end, :, :, :]
+                    features = feature_matrix[i:batch_end, :]
+                    print(spectro_batch.shape)
+                    print(features.shape)
+                    yield (spectro_batch, features)
+            break
 
 
 def efects_batch_generator(h5_spectrograms_file, h5_subject_ids_file, h5_block_ids_file, h5_feature_matrix_file, batch_size=32, shuffle=False):

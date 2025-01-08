@@ -34,9 +34,6 @@ history = model.fit(
     validation_data=validation_batch_generator(spectrograms, feature_matrix, batch_size=batch_size),
     validation_steps=validation_steps
 )
-# Print training and validation accuracy
-print("Training Accuracy: {:.2f}%".format(100 * (1 - history.history['loss'][-1])))
-print("Validation Accuracy: {:.2f}%".format(100 * (1 - history.history['val_loss'][-1])))
 
 # Save the trained model
 model.save("/home/aditis/decodingEEG/DecodeEEG/data/results/cnn_model_simple_trained.h5")
