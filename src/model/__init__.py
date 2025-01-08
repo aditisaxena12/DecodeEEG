@@ -1,1 +1,2 @@
 from model_efects import model_ccn
+from decoder import build_decoder_model
