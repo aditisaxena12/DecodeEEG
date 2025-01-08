@@ -45,3 +45,11 @@ history = model.fit(
 # Save the trained model
 model.save("/home/aditis/decodingEEG/DecodeEEG/data/results/cnn_model_efects_trained.h5")
 
+# Plot training vs validation loss (optional)
+import matplotlib.pyplot as plt
+plt.plot(history.history['loss'], label='Training Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.title('Training vs Validation Loss')
+plt.savefig("simple_sub-02.png")
