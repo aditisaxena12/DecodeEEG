@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from keras.utils.vis_utils import plot_model
 
-def build_decoder_model(input_shape=(512,), output_shape=(500, 500, 3)):
+def build_decoder_model(input_shape=(512,), output_shape=(512, 512, 3)):
     model = models.Sequential()
 
     # Input layer
@@ -25,8 +25,6 @@ def build_decoder_model(input_shape=(512,), output_shape=(500, 500, 3)):
     model.add(layers.Conv2DTranspose(32, (3, 3), activation='relu', padding='same'))
     model.add(layers.UpSampling2D((2, 2)))
 
-    model.add(layers.Conv2DTranspose(16, (3, 3), activation='relu', padding='same'))
-    model.add(layers.UpSampling2D((2, 2)))
 
     # Final convolutional layer to get the desired output shape
     model.add(layers.Conv2DTranspose(output_shape[2], (3, 3), activation='sigmoid', padding='same'))

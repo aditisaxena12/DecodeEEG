@@ -1,6 +1,8 @@
 from eeg_preprocessing import eeg_to_spectrogram
 import numpy as np
 import h5py
+import os
+import cv2
 
 def train_batch_generator(path_to_spectrograms, feature_matrix, batch_size=1654):
     """
@@ -108,3 +110,21 @@ def efects_batch_generator(h5_spectrograms_file, h5_subject_ids_file, h5_block_i
                 
                 # Yield the inputs and targets as a tuple
                 yield inputs, feature_batch
+
+def image_batch_generator(path_to_images, path_to_features):
+    """
+    Generator for image data batches.
+    Input : Path to directory containing images, feature matrix of all images (16540 x 512)
+    Output : Batches of images (10 x 500 x 500 x 3) and feature vectors (10 x 512)
+    """
+    # List all class files in the directory
+    class_folders = os.listdir(path_to_images)
+    
+    while True:  # Infinite loop to yield batches
+        for i, clas in enumerate(class_folders):
+            im_class_path = os.path.join(path_to_images, clas)
+            feat_class_path = os.path.join(path_to_features, clas)  # Path to feature vectors
+            image_files = os.listdir(im_class_path)
+            images = np.array([cv2.resize(cv2.imread(os.path.join(im_class_path, file)), (512,512)) for file in image_files])
+            features = np.array([np.load(os.path.join(feat_class_path, file.replace('.jpg', '.npy'))) for file in image_files])
+            yield (features,images)  # Yield the batch

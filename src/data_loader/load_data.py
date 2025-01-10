@@ -65,3 +65,23 @@ def load_features(training = True):
     print("Shape of feature matrix:",feature_matrix.shape)  # Output: (16540, 512) for training, (200, 512) for test
 
     return feature_matrix
+
+
+def load_images(training = True):
+    path_to_images = "/home/aditis/decodingEEG/DecodeEEG/data/images/processed_images"
+
+    # Initialize an empty list to store the loaded arrays
+    data = []
+
+    if training:
+        classes = os.listdir(path_to_images+"/training/")
+    else:
+        classes = os.listdir(path_to_images+"/test/")
+
+    for clas in classes:
+        if training:
+            file_path  = path_to_images + "/training/" + clas
+        else:
+            file_path  = path_to_images + "/test/" + clas
+
+    
