@@ -32,6 +32,10 @@ for batch_data,_ in test_batch_generator(test_eeg_data, test_feature_matrix, bat
     predicted_features.append(batch_predictions)
 
 predicted_features = np.concatenate(predicted_features, axis=0)
+predicted_features = predicted_features.reshape(-1, 80, predicted_features.shape[1], predicted_features.shape[2], predicted_features.shape[3])
+predicted_features = np.mean(predicted_features, axis=1)
+print(f"Predicted Features Shape: {predicted_features.shape}")
+print(f"Test Features Shape: {test_feature_matrix.shape}")
 
-similarity_scores = cosine_similarity(predicted_features, test_feature_matrix)
+similarity_scores = cosine_similarity(predicted_features.reshape(predicted_features.shape[0], -1), test_feature_matrix.reshape(test_feature_matrix.shape[0], -1))
 print(f"Average Cosine Similarity: {np.mean(similarity_scores)}")
