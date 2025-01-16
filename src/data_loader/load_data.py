@@ -62,7 +62,7 @@ def load_features(training = True):
     feature_matrix = np.vstack(data)  # Stack arrays vertically
 
     # Verify the shape
-    print("Shape of feature matrix:",feature_matrix.shape)  # Output: (16540, 512) for training, (200, 512) for test
+    print("Shape of feature matrix:",feature_matrix.shape)  # Output: (16540, 512, 7,7) for training, (200, 512, 7,7) for test
 
     return feature_matrix
 

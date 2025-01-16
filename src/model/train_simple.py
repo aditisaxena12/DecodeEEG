@@ -11,7 +11,7 @@ from data_loader import load_spectrograms, load_features, train_batch_generator,
 
 
 #load data for one subject
-spectrograms = load_spectrograms(subject_id="02") # by default subject 1
+spectrograms = load_spectrograms(subject_id="01") # by default subject 1
 feature_matrix = load_features() 
 
 # Set parameters
@@ -46,4 +46,4 @@ plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
 plt.title('Training vs Validation Loss')
-plt.savefig("simple_sub-02.png")
+plt.savefig("simple_sub-01.png")

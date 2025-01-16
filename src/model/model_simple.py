@@ -20,22 +20,27 @@ def build_cnn_model(input_shape=(17, 26, 26)):
     model.add(layers.InputLayer(input_shape=input_shape))
 
     # Convolutional layers
-    model.add(layers.Conv2D(32, (3, 3), activation='relu', padding='same'))  # 32 filters, kernel size 3x3
-    model.add(layers.MaxPooling2D((2, 2)))  # Max pooling (2x2)
-
     model.add(layers.Conv2D(64, (3, 3), activation='relu', padding='same'))  # 64 filters, kernel size 3x3
     model.add(layers.MaxPooling2D((2, 2)))  # Max pooling (2x2)
 
     model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))  # 128 filters, kernel size 3x3
     model.add(layers.MaxPooling2D((2, 2)))  # Max pooling (2x2)
 
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))  # 256 filters, kernel size 3x3
+    model.add(layers.MaxPooling2D((2, 2)))  # Max pooling (2x2)
+
+    model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same'))  # 512 filters, kernel size 3x3
+    model.add(layers.MaxPooling2D((2, 2)))  # Max pooling (2x2)
+
     # Flatten the output of the last convolutional layer
     model.add(layers.Flatten())
 
     # Dense layers to map to 512-dimensional feature vector
-    model.add(layers.Dense(512, activation='relu'))  # Dense layer with 512 neurons
+    model.add(layers.Dense(512 * 7 * 7, activation='relu'))  # Dense layer with 512 neurons
     model.add(layers.Dropout(0.3))  # Dropout for regularization
-    model.add(layers.Dense(512, activation='linear'))  # Output layer with 512 neurons (regression task)
+    model.add(layers.Dense(512 * 7 * 7, activation='linear'))  # Output layer with 512 neurons (regression task)
+
+    model.add(layers.Reshape((512, 7, 7)))
 
     # Compile the model
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])

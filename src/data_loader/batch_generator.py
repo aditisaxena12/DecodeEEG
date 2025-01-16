@@ -21,7 +21,7 @@ def train_batch_generator(path_to_spectrograms, feature_matrix, batch_size=1654)
                 for k in range(0, num_samples, batch_size):  # Iterate over chunks
                     batch_end = min(k + batch_size, num_samples)  # Ensure no overflow
                     spectro = spec[k:batch_end,:,:]
-                    features = feature_matrix[k:batch_end, :]
+                    features = feature_matrix[k:batch_end, :,:,:]
                     yield (spectro, features)  # Yield the batch
 
 
@@ -41,7 +41,7 @@ def validation_batch_generator(path_to_spectrograms, feature_matrix, batch_size=
             for k in range(0, num_samples, batch_size):  # Iterate over chunks
                 batch_end = min(k + batch_size, num_samples)  # Ensure no overflow
                 spectro = spec[k:batch_end,:,:]
-                features = feature_matrix[k:batch_end, :]
+                features = feature_matrix[k:batch_end, :,:,:]
                 yield (spectro, features)  # Yield the batch
 
 
@@ -56,7 +56,7 @@ def test_batch_generator(path_to_spec, feature_matrix, batch_size=20):
                 for i in range(0, num_samples, batch_size):
                     batch_end = min(i + batch_size, num_samples)
                     spectro_batch = spec[i:batch_end, :, :, :]
-                    features = feature_matrix[i:batch_end, :]
+                    features = feature_matrix[i:batch_end, :,:,:]
                     print(spectro_batch.shape)
                     print(features.shape)
                     yield (spectro_batch, features)
