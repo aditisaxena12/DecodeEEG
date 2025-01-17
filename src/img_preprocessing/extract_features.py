@@ -10,7 +10,7 @@ import sys
 sys.path.append("./")
 
 import utils
-import builer as builder
+import img_preprocessing.builder as builder
 import encode
 
 # from img_to_vec import Img2Vec

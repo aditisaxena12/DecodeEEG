@@ -113,7 +113,7 @@ def efects_batch_generator(h5_spectrograms_file, h5_subject_ids_file, h5_block_i
 
 def image_batch_generator(path_to_images, path_to_features):
     """
-    Generator for image data batches.
+    Generator for image data batches fo decoder training
     Input : Path to directory containing images, feature matrix of all images (16540 x 512)
     Output : Batches of images (10 x 500 x 500 x 3) and feature vectors (10 x 512)
     """

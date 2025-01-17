@@ -14,7 +14,8 @@ def BuildAutoEncoder(args):
         model = resnet.ResNetAutoEncoder(configs, bottleneck)
     
     else:
-        return None
+        configs, bottleneck = resnet.get_configs("resnet18")
+        model = resnet.ResNetAutoEncoder(configs, bottleneck) 
     
     if args.parallel == 1:
         model = nn.SyncBatchNorm.convert_sync_batchnorm(model)

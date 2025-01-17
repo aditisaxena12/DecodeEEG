@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-import argparse
 
 import matplotlib.pyplot as plt
 
@@ -12,74 +9,42 @@ import sys
 sys.path.append("./")
 
 import utils
-import builer as builder
+import img_preprocessing.builder as builder
 
 import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-def get_args():
-    # parse the args
-    print('=> parse the args ...')
-    parser = argparse.ArgumentParser(description='Trainer for auto encoder')
-    parser.add_argument('--arch', default='resnet18', type=str, 
-                        help='backbone architechture')
-    parser.add_argument('--resume', type=str)      
-    
-    args = parser.parse_args()
+class Decoder():
+    def __init__(self, args):
+        self.model_path = "/home/aditis/decodingEEG/DecodeEEG/data/results/caltech256-resnet18.pth"
+        print('=> torch version : {}'.format(torch.__version__))
+        utils.init_seeds(1, cuda_deterministic=False)
+        print('=> modeling the network ...')
+        self.model = builder.BuildAutoEncoder("resnet18")     
+        total_params = sum(p.numel() for p in self.model.parameters())
+        print('=> num of params: {} ({}M)'.format(total_params, int(total_params * 4 / (1024*1024))))
 
-    args.parallel = 0
-    args.batch_size = 1
-    args.workers = 0
+        print('=> loading pth from {} ...'.format(args.resume))
+        utils.load_dict(self.model_path, self.model)
 
-    return args
+        self.trans = transforms.ToPILImage()
 
-def random_sample(arch):
+        self.model.eval()
+        print('=> completed decoder initilization ...')
 
-    if arch in ["vgg11", "vgg13", "vgg16", "vgg19", "resnet18", "resnet34"]:
-        return torch.randn((1,512,7,7))
-    elif arch in ["resnet50", "resnet101", "resnet152"]:
-        return torch.randn((1,2048,7,7))
-    else:
-        raise NotImplementedError("Do not have implemention except VGG and ResNet")
+        
+    def decode(self, input):
 
-def main(args):
-    print('=> torch version : {}'.format(torch.__version__))
+        with torch.no_grad():
 
-    utils.init_seeds(1, cuda_deterministic=False)
-
-    print('=> modeling the network ...')
-    model = builder.BuildAutoEncoder(args)     
-    total_params = sum(p.numel() for p in model.parameters())
-    print('=> num of params: {} ({}M)'.format(total_params, int(total_params * 4 / (1024*1024))))
-
-    print('=> loading pth from {} ...'.format(args.resume))
-    utils.load_dict(args.resume, model)
-
-    trans = transforms.ToPILImage()
-
-    plt.figure(figsize=(16, 9))
-
-    model.eval()
-    print('=> Genarating ...')
-    with torch.no_grad():
-        for i in range(128):
-            
-            input = random_sample(arch=args.arch).cuda()
-
-            output = model.module.decoder(input)
-
-            output = trans(output.squeeze().cpu())
-
-            plt.subplot(8,16,i+1, xticks=[], yticks=[])
+            output = self.model.module.decoder(input)
+            output = self.trans(output.squeeze().cpu())
             plt.imshow(output)
+            plt.savefig(f'figs/generation_{input}.jpg')
 
-    plt.savefig('figs/generation.jpg')
+        return output
 
-if __name__ == '__main__':
-
-    args = get_args()
-
-    main(args)
+    
 
 
