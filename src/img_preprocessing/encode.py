@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 class Encoder():
-    def __init__(self, args):
+    def __init__(self):
         self.model_path = "/home/aditis/decodingEEG/DecodeEEG/data/results/caltech256-resnet18.pth"
         print('=> torch version : {}'.format(torch.__version__))
         utils.init_seeds(1, cuda_deterministic=False)
@@ -24,7 +24,7 @@ class Encoder():
         total_params = sum(p.numel() for p in self.model.parameters())
         print('=> num of params: {} ({}M)'.format(total_params, int(total_params * 4 / (1024*1024))))
 
-        print('=> loading pth from {} ...'.format(args.resume))
+        print('=> loading pth from {} ...'.format(self.model_path))
         utils.load_dict(self.model_path, self.model)
  
         self.trans = transforms.Compose([

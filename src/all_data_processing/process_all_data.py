@@ -9,11 +9,11 @@ num_samples = 16540 * 4 * 10
 num_subjects = 10
 num_images_per_sub = 16540 * 4
 dim = [1, 26, 26, 17]  # Spectrogram input dimensions
-feature_vector_dim = 512  # Ground truth feature vector dimension
+feature_vector_dim =[512,7,7] 
 
 subject_ids = []
 block_ids = []
-specs = []
+specs = [] 
 feats = []
 
 # Load all image vectors
